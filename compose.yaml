@@ -1,0 +1,21 @@
+name: ai-agents-kb
+services:
+  anythingllm:
+    image: ${ANYTHINGLLM_IMAGE:?Run scripts/start.ps1 to pin the downloaded image}
+    ports:
+      - "127.0.0.1:${APP_PORT:-3001}:3001"
+    environment:
+      STORAGE_DIR: /app/server/storage
+      DISABLE_TELEMETRY: "true"
+    volumes:
+      - ./storage:/app/server/storage
+      - ./storage/.env:/app/server/.env
+      - ./web/start.html:/app/server/public/start.html:ro
+    restart: unless-stopped
+    mem_limit: 4g
+    cpus: 2.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

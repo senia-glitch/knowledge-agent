@@ -1,0 +1,7 @@
+.env
+.cache/
+.docker/
+storage/
+backups/
+verification/local-*.json
+*.log
