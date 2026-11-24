@@ -22,11 +22,7 @@ if (!(Test-Path -LiteralPath $runtimeEnv)) {
 }
 $composeEnv = Join-Path $projectRoot '.env'
 if (!(Test-Path -LiteralPath $composeEnv)) {
-    & docker --context desktop-linux pull mintplexlabs/anythingllm:latest
-    if ($LASTEXITCODE -ne 0) { throw 'Image download failed. Check Docker networking and VPN.' }
-    $digest = & docker --context desktop-linux image inspect mintplexlabs/anythingllm:latest --format '{{index .RepoDigests 0}}'
-    if ($LASTEXITCODE -ne 0 -or $digest -notmatch '^mintplexlabs/anythingllm@sha256:[a-f0-9]{64}$') { throw 'Cannot determine image digest.' }
-    [IO.File]::WriteAllText($composeEnv, "ANYTHINGLLM_IMAGE=$digest`nAPP_PORT=3001`n", [Text.UTF8Encoding]::new($false))
+    Copy-Item -LiteralPath (Join-Path $projectRoot '.env.example') -Destination $composeEnv
 }
 & $composeExe --project-directory $projectRoot up -d
 if ($LASTEXITCODE -ne 0) { throw 'Compose startup failed.' }
