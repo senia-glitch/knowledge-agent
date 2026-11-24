@@ -20,6 +20,11 @@ if (!(Test-Path -LiteralPath $runtimeEnv)) {
     ) -join "`n"
     [IO.File]::WriteAllText($runtimeEnv, $seed + "`n", [Text.UTF8Encoding]::new($false))
 }
+if (!(Select-String -LiteralPath $runtimeEnv -Pattern '^GENERIC_OPEN_AI_CUSTOM_HEADERS=' -Quiet)) {
+    # This MVP uses one stable provider session for its default demo conversation.
+    $providerSession = 'kb-main-' + [guid]::NewGuid().ToString('N')
+    [IO.File]::AppendAllText($runtimeEnv, "`nGENERIC_OPEN_AI_CUSTOM_HEADERS=x-opencode-session:$providerSession`n", [Text.UTF8Encoding]::new($false))
+}
 $composeEnv = Join-Path $projectRoot '.env'
 if (!(Test-Path -LiteralPath $composeEnv)) {
     Copy-Item -LiteralPath (Join-Path $projectRoot '.env.example') -Destination $composeEnv
